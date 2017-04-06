@@ -3,6 +3,10 @@
 <head>
 <title>Local Democratic Party Events</title>
 
+  <link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/fullcalendar/3.3.1/fullcalendar.min.css" integrity="sha256-31guqc+y1B7LB0VRo9h4fLZvY6B2tBsWzsswyBQRteU=" crossorigin="anonymous" />
+  <script src="//cdnjs.cloudflare.com/ajax/libs/jquery/3.2.1/jquery.min.js" integrity="sha256-hwg4gsxgFZhOsEEamdOYGBf13FyQuiTwlAQgxVSNgt4=" crossorigin="anonymous"></script>
+  <script src="//cdnjs.cloudflare.com/ajax/libs/moment.js/2.18.1/moment.min.js" integrity="sha256-1hjUhpc44NwiNg8OwMu2QzJXhD8kcj+sJA3aCQZoUjg=" crossorigin="anonymous"></script>
+  <script src="//cdnjs.cloudflare.com/ajax/libs/fullcalendar/3.3.1/fullcalendar.min.js" integrity="sha256-KfusLKl7lF5lJzh3+hg6yiNE6i0NAFV8uNiWrVn79u4=" crossorigin="anonymous"></script>
 <script type="text/javascript">
 
 function toggleDisplay (dv) {
@@ -59,6 +63,7 @@ function changeText() {
           strInfo += "<div>";
           
           // Event Date and Time:
+          dataObj[iEvent].start = moment(dataObj[iEvent].eventDate + ' ' + dataObj[iEvent].eventStartTime, ["ddd MM/DD hh:mm A", "ddd MM/DD/YYYY hh:mm A"]).format()
           strInfo += dataObj[iEvent].eventDate;
           // If not rendering mini, add the time:
           if (strRender != "mini") { 
@@ -66,6 +71,7 @@ function changeText() {
             // enable eventEndTime to be optional
             try {
               if ( dataObj[iEvent].eventEndTime.length > 0 ) {
+                dataObj[iEvent].end = moment(dataObj[iEvent].eventDate + ' ' + dataObj[iEvent].eventEndTime, ["ddd MM/DD hh:mm A", "ddd MM/DD/YYYY hh:mm A"]).format()
                 strInfo += " to " + dataObj[iEvent].eventEndTime;
               } // end if+else
             } catch (err) {
@@ -105,8 +111,10 @@ function changeText() {
           // Event Title (and hyperlink)
           // If  the event has a web page, hyperlink the event title
           // Uses try+catch to enable eventWeb to be optional
+          dataObj[iEvent].title = dataObj[iEvent].eventTitle;
           try { 
             if ( dataObj[iEvent].eventWeb.length > 0 ) {
+              dataObj[iEvent].url = dataObj[iEvent].eventWeb;
               strInfo += "<a href='" + dataObj[iEvent].eventWeb + "'>";
               strInfo += dataObj[iEvent].eventTitle;
               strInfo += "</a> ";
@@ -151,7 +159,14 @@ function changeText() {
         
       } // end catch for rendering the events list
           
-      document.getElementById('pInfo').innerHTML = strInfo;
+      if (strRender == "month") {
+        document.getElementById('pInfo').innerHTML = "";
+        $('#pInfo').fullCalendar({
+          events: dataObj
+        })
+      } else {
+        document.getElementById('pInfo').innerHTML = strInfo;
+      }
     }
   };
   request.open('GET', 'events.json', true);
@@ -170,7 +185,7 @@ function changeText() {
 <h1>Local Democratic Party Events</h1>
 
 <p style="font-size:smaller">
-  View: <a href="?render=mini">Mini</a> | <a href="?render=">Default</a> | <a href="?render=full">Full</a>
+  View: <a href="?render=mini">Mini</a> | <a href="?render=">Default</a> | <a href="?render=full">Full</a> | <a href="?render=month">Month</a>
 </p>
   
 <p style="font-size:smaller">
