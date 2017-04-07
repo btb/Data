@@ -89,7 +89,7 @@ function changeText() {
           // TODO: Would be great to easily hyperlink to organization
           switch ( dataObj[iEvent].eventOrgType ) {
             case "Ally":
-              strInfo += dataObj[iEvent].eventOrgShort + " ";
+              org = dataObj[iEvent].eventOrgShort + " ";
               break;
             case "LD":
             case "County":
@@ -98,20 +98,21 @@ function changeText() {
             case "Young":
             case "State":
               if (strRender != "mini") {
-                strInfo += dataObj[iEvent].eventOrgShort + " " + dataObj[iEvent].eventOrgType + " Democrats "; 
+                org = dataObj[iEvent].eventOrgShort + " " + dataObj[iEvent].eventOrgType + " Democrats ";
               } else {
-                strInfo += dataObj[iEvent].eventOrgShort + " " + dataObj[iEvent].eventOrgType + " Dems "; 
+                org = dataObj[iEvent].eventOrgShort + " " + dataObj[iEvent].eventOrgType + " Dems ";
               } // end if+else
               break;
             default:
-              strInfo += dataObj[iEvent].eventOrgShort + " ";
+              org = dataObj[iEvent].eventOrgShort + " ";
               break;
           } // end switch on eventOrgType
+          strInfo += org;
           
           // Event Title (and hyperlink)
           // If  the event has a web page, hyperlink the event title
           // Uses try+catch to enable eventWeb to be optional
-          dataObj[iEvent].title = dataObj[iEvent].eventTitle;
+          dataObj[iEvent].title = org + dataObj[iEvent].eventTitle;
           try { 
             if ( dataObj[iEvent].eventWeb.length > 0 ) {
               dataObj[iEvent].url = dataObj[iEvent].eventWeb;
