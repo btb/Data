@@ -4,9 +4,11 @@
 <title>Local Democratic Party Events</title>
 
   <link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/fullcalendar/3.3.1/fullcalendar.min.css" integrity="sha256-31guqc+y1B7LB0VRo9h4fLZvY6B2tBsWzsswyBQRteU=" crossorigin="anonymous" />
+  <link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/qtip2/3.0.3/jquery.qtip.min.css" integrity="sha256-JvdVmxv7Q0LsN1EJo2zc1rACwzatOzkyx11YI4aP9PY=" crossorigin="anonymous" />
   <script src="//cdnjs.cloudflare.com/ajax/libs/jquery/3.2.1/jquery.min.js" integrity="sha256-hwg4gsxgFZhOsEEamdOYGBf13FyQuiTwlAQgxVSNgt4=" crossorigin="anonymous"></script>
   <script src="//cdnjs.cloudflare.com/ajax/libs/moment.js/2.18.1/moment.min.js" integrity="sha256-1hjUhpc44NwiNg8OwMu2QzJXhD8kcj+sJA3aCQZoUjg=" crossorigin="anonymous"></script>
   <script src="//cdnjs.cloudflare.com/ajax/libs/fullcalendar/3.3.1/fullcalendar.min.js" integrity="sha256-KfusLKl7lF5lJzh3+hg6yiNE6i0NAFV8uNiWrVn79u4=" crossorigin="anonymous"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/qtip2/3.0.3/jquery.qtip.min.js" integrity="sha256-a+PRq3NbyK3G08Boio9X6+yFiHpTSIrbE7uzZvqmDac=" crossorigin="anonymous"></script>
 <script type="text/javascript">
 
 function toggleDisplay (dv) {
@@ -163,7 +165,28 @@ function changeText() {
       if (strRender == "month") {
         document.getElementById('pInfo').innerHTML = "";
         $('#pInfo').fullCalendar({
-          events: dataObj
+          events: dataObj,
+          eventRender: function(event, element) {
+            element.qtip({
+              content: {
+                title: element.clone(),
+                text: event.eventDescription
+              },
+              hide: {
+                fixed: true,
+                delay: 500
+              },
+              position: {
+                my: 'top left',
+                at: 'top left'
+              },
+              style: {
+                def: false,
+                classes: 'fc-event',
+                tip: { corner: false }
+              }
+            });
+          }
         })
       } else {
         document.getElementById('pInfo').innerHTML = strInfo;
