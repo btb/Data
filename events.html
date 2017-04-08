@@ -9,6 +9,7 @@
   <script src="//cdnjs.cloudflare.com/ajax/libs/moment.js/2.18.1/moment.min.js" integrity="sha256-1hjUhpc44NwiNg8OwMu2QzJXhD8kcj+sJA3aCQZoUjg=" crossorigin="anonymous"></script>
   <script src="//cdnjs.cloudflare.com/ajax/libs/fullcalendar/3.3.1/fullcalendar.min.js" integrity="sha256-KfusLKl7lF5lJzh3+hg6yiNE6i0NAFV8uNiWrVn79u4=" crossorigin="anonymous"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/qtip2/3.0.3/jquery.qtip.min.js" integrity="sha256-a+PRq3NbyK3G08Boio9X6+yFiHpTSIrbE7uzZvqmDac=" crossorigin="anonymous"></script>
+  <script src="//cdn.rawgit.com/btb/add-to-calendar-buttons/master/ouical.js"></script>
 <script type="text/javascript">
 
 function toggleDisplay (dv) {
@@ -62,10 +63,11 @@ function changeText() {
         // for each event
         for (iEvent = 0; iEvent < dataObj.length; iEvent++) {
 
-          strInfo += "<div>";
+          strInfo += "<div class='event' id='" + iEvent + "'>";
           
           // Event Date and Time:
-          dataObj[iEvent].start = moment(dataObj[iEvent].eventDate + ' ' + dataObj[iEvent].eventStartTime, ["ddd MM/DD hh:mm A", "ddd MM/DD/YYYY hh:mm A"]).format()
+          dataObj[iEvent].startMoment = moment(dataObj[iEvent].eventDate + ' ' + dataObj[iEvent].eventStartTime, ["ddd MM/DD hh:mm A", "ddd MM/DD/YYYY hh:mm A"]);
+          dataObj[iEvent].start = dataObj[iEvent].startMoment.format();
           strInfo += dataObj[iEvent].eventDate;
           // If not rendering mini, add the time:
           if (strRender != "mini") { 
@@ -73,7 +75,8 @@ function changeText() {
             // enable eventEndTime to be optional
             try {
               if ( dataObj[iEvent].eventEndTime.length > 0 ) {
-                dataObj[iEvent].end = moment(dataObj[iEvent].eventDate + ' ' + dataObj[iEvent].eventEndTime, ["ddd MM/DD hh:mm A", "ddd MM/DD/YYYY hh:mm A"]).format()
+                dataObj[iEvent].endMoment = moment(dataObj[iEvent].eventDate + ' ' + dataObj[iEvent].eventEndTime, ["ddd MM/DD hh:mm A", "ddd MM/DD/YYYY hh:mm A"]);
+                dataObj[iEvent].end = dataObj[iEvent].endMoment.format();
                 strInfo += " to " + dataObj[iEvent].eventEndTime;
               } // end if+else
             } catch (err) {
@@ -148,6 +151,19 @@ function changeText() {
             } // end try+catch
           } // end if rendering full
 
+          dataObj[iEvent].start = dataObj[iEvent].startMoment.toDate();
+          if (dataObj[iEvent].endMoment) {
+              dataObj[iEvent].end = dataObj[iEvent].endMoment.toDate();
+          } else {
+              dataObj.duration = 30;
+          }
+          dataObj[iEvent].addToCalendarLinks = createCalendar({
+            options: {
+              id: "addlinks-" + iEvent
+            },
+            data: dataObj[iEvent]
+          });
+
           // Close the event listing
           strInfo += "</div>";
           
@@ -193,6 +209,11 @@ function changeText() {
       } else {
         document.getElementById('pInfo').innerHTML = strInfo;
       }
+
+      $("div.event").append(function() {
+        return dataObj[this.id].addToCalendarLinks;
+      });
+
     }
   };
   request.open('GET', 'events.json', true);
